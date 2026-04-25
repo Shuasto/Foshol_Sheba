@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}কৃষক ড্যাশবোর্ড - ফসলসেবা{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        border-radius: 20px;
+        border: none;
+        transition: transform 0.3s;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .action-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+    .bg-light-success { background-color: #e8f5e9; }
+    .bg-light-warning { background-color: #fff3e0; }
+    .bg-light-primary { background-color: #e3f2fd; }
+
+    .last-border-0:last-child {
+        border-bottom: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h1 class="fw-800 text-success">স্বাগতম, {{ user.first_name }} {{ user.last_name }}! 🌿</h1>
+            <p class="text-muted">আপনার ফসলের স্বাস্থ্য এবং বাজারের প্রবণতা পর্যবেক্ষণ করুন।</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'farmers:diagnose_crop' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                + নতুন রোগ নির্ণয়
+            </a>
+        </div>
+    </div>
+
+    {% if is_profile_incomplete %}
+    <!-- Profile Completion Alert -->
+    <div class="alert alert-warning border-0 shadow-sm rounded-4 p-4 mb-5 d-flex flex-column flex-md-row align-items-center justify-content-between">
+        <div class="d-flex align-items-center mb-3 mb-md-0">
+            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3">
+                <span class="fs-3">👤</span>
+            </div>
+            <div>
+                <h5 class="fw-800 mb-1 text-dark">আপনার প্রোফাইলটি অসম্পূর্ণ!</h5>
+                <p class="mb-0 text-muted">অনুগ্রহ করে খামারের আকার এবং প্রধান ফসল যুক্ত করে আপনার প্রোফাইলটি আপডেট করুন।</p>
+            </div>
+        </div>
+        <a href="{% url 'farmers:edit_profile' %}" class="btn btn-warning fw-bold rounded-pill px-4 py-2 shadow-sm">
+            ✏️ তথ্য প্রদান করুন
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="row g-4 mb-5">
+        <!-- Quick Stats -->
+        <div class="col-md-3">
+            <div class="dashboard-card bg-white p-4 text-center h-100">
+                <div class="action-icon bg-light-success mx-auto"><span class="fs-2">📷</span></div>
+                <h3 class="fw-800 mb-0">{{ total_diagnoses|bn_number }}</h3>
+                <p class="text-muted small mb-0">মোট রোগ নির্ণয়</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card bg-white p-4 text-center h-100">
+                <div class="action-icon bg-light-warning mx-auto"><span class="fs-2">📈</span></div>
+                <h3 class="fw-800 mb-0">{{ recent_prices_count|bn_number }}</h3>
+                <p class="text-muted small mb-0">বাজার দর আপডেট</p>
+            </div>
+        </div>
+        <!-- Health Alert Card -->
+        <div class="col-md-6">
+            <div class="dashboard-card bg-success text-white p-4 h-100 overflow-hidden position-relative">
+                <div class="position-relative z-index-1">
+                    <h5 class="fw-bold">আজকের স্মার্ট টিপস</h5>
+                    <p class="mb-0 opacity-75">আপনার ধানের পাতার রঙ খেয়াল করুন। হলুদ ভাব দেখা দিলে তা নাইট্রোজেনের অভাব হতে পারে। দ্রুত বিশ্লেষণের জন্য ছবি আপলোড করুন!</p>
+                </div>
+                <span class="position-absolute end-0 bottom-0 opacity-25"
+                    style="font-size: 8rem; line-height: 0;">🌱</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Diagnosis History -->
+        <div class="col-lg-8">
+            <div class="dashboard-card bg-white p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-800 mb-0">সাম্প্রতিক কার্যক্রম</h5>
+                    <a href="{% url 'farmers:diagnostic_history' %}" class="text-success text-decoration-none small fw-bold">সবগুলো দেখুন</a>
+                </div>
+                <div class="row g-3">
+                    {% for activity in activities %}
+                    <div class="col-12">
+                        {% if activity.detected_disease or activity.status %}
+                        <!-- Diagnostic Activity Card -->
+                        <a href="{% url 'farmers:diagnostic_result' activity.pk %}" class="text-decoration-none">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 transition-up border-start border-4 border-success">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ activity.crop_image.url }}" class="rounded-3 me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="fw-bold text-dark mb-0">
+                                                {% if activity.crop %}{{ activity.crop.name_bn }}{% else %}অজানা ফসল{% endif %} - 
+                                                <span class="text-success">{{ activity.detected_disease.name_bn|default:"রোগ নির্ণয় করা হচ্ছে..." }}</span>
+                                            </h6>
+                                            <small class="text-muted">{{ activity.created_at|date:"d M, Y" }}</small>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            {% if activity.status == 'completed' %}
+                                            <span class="badge bg-light-success text-success rounded-pill px-3 py-1 small">সম্পন্ন</span>
+                                            {% else %}
+                                            <span class="badge bg-light-warning text-warning rounded-pill px-3 py-1 small">চলমান</span>
+                                            {% endif %}
+                                            <small class="ms-3 text-muted">📸 ডিজিটাল রোগ নির্ণয়</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% else %}
+                        <!-- Community Post Card -->
+                        <a href="{% url 'core:forum_detail' activity.pk %}" class="text-decoration-none">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 transition-up border-start border-4 border-primary">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-light-primary text-primary rounded-3 me-3 flex-shrink-0" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                        <span class="fs-4">💬</span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <h6 class="fw-bold text-dark mb-0">{{ activity.title|truncatechars:50 }}</h6>
+                                            <small class="text-muted">{{ activity.created_at|date:"d M, Y" }}</small>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-light-primary text-primary rounded-pill px-3 py-1 small">ফোরাম পোস্ট</span>
+                                            <small class="ms-3 text-muted">আপনি একটি আলোচনা শুরু করেছেন</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <div class="bg-light rounded-4 p-4">
+                            <p class="text-muted mb-0">এখনো কোনো কার্যক্রম নেই। এখনই আপনার প্রথম ফসলের পরীক্ষা করুন!</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Prices Sidebar -->
+        <div class="col-lg-4">
+            <div class="dashboard-card bg-white p-4 h-100">
+                <h5 class="fw-800 mb-4">বাজার দর</h5>
+                {% for price in prices %}
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom last-border-0">
+                    <div>
+                        <h6 class="mb-0 fw-bold">{{ price.crop.name_bn }}</h6>
+                        <small class="text-muted">{{ price.market_name }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-800 text-success">{{ price.price_per_kg }} টাকা</span><br>
+                        <small class="text-muted">/ কেজি</small>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted small text-center">বাজার দর বর্তমানে পাওয়া যাচ্ছে না।</p>
+                {% endfor %}
+                <a href="{% url 'core:marketprice_full_view' %}" class="btn btn-outline-success w-100 rounded-pill mt-3 small fw-bold">আরো বাজার দেখুন</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

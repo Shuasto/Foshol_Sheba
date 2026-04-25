@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}পর্যালোচনা ইতিহাস - ফসলসেবা{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #2e7d32 0%, #81c784 100%);
+        padding: 50px 0;
+        margin-top: 80px;
+        margin-bottom: 50px;
+        color: white;
+    }
+    .history-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        background: white;
+        transition: transform 0.3s;
+    }
+    .history-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .advice-text {
+        background-color: #f8fafc;
+        border-left: 4px solid #2e7d32;
+        padding: 15px;
+        border-radius: 0 10px 10px 0;
+        font-size: 0.95rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header text-center">
+    <div class="container">
+        <h1 class="fw-800 mb-2">📜 আপনার পর্যালোচনার ইতিহাস</h1>
+        <p class="fs-5 opacity-75 mb-0">আপনার দেওয়া সমস্ত পূর্ববর্তী পেশাদার পরামর্শ ও যাচাইকরণ</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">মোট পরামর্শ: {{ advices|length|bn_number }} টি</h4>
+        <a href="{% url 'core:expert_dashboard' %}" class="btn btn-outline-success rounded-pill fw-bold">
+            ← ড্যাশবোর্ডে ফিরে যান
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for advice in advices %}
+        <div class="col-lg-6">
+            <div class="history-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-bold">
+                        ✅ সম্পন্ন
+                    </span>
+                    <small class="text-muted fw-bold">{{ advice.created_at|date:"d M, Y" }}</small>
+                </div>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-4">
+                        <div class="rounded-3 overflow-hidden" style="aspect-ratio: 1; border: 1px solid #eee;">
+                            <img src="{{ advice.diagnostic_record.crop_image.url }}" alt="Scan" class="w-100 h-100 object-fit-cover">
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <h6 class="fw-bold fs-5 text-dark mb-1">
+                            ফসল: {{ advice.diagnostic_record.detected_disease.crop.name_bn }}
+                        </h6>
+                        <p class="text-danger fw-bold small mb-2">
+                            রোগ: {{ advice.diagnostic_record.detected_disease.name_bn }}
+                        </p>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">
+                            <strong>এআই আত্মবিশ্বাস:</strong> {{ advice.diagnostic_record.confidence_score|bn_number }}%
+                        </p>
+                    </div>
+                </div>
+
+                <div class="advice-text mt-3">
+                    <p class="fw-bold text-success mb-2 small">আপনার পরামর্শ:</p>
+                    <p class="mb-0 text-dark">{{ advice.advice_bn|linebreaksbr }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="bg-light rounded-4 p-5 d-inline-block shadow-sm">
+                <div class="fs-1 mb-3">🔍</div>
+                <h5 class="text-muted fw-bold">আপনি এখনও কোনো রোগ নির্ণয় পর্যালোচনা করেননি।</h5>
+                <p class="text-muted mb-4 mt-2">অপেক্ষমান কাজগুলো দেখুন এবং আপনার প্রথম পরামর্শ প্রদান করুন।</p>
+                <a href="{% url 'core:expert_dashboard' %}" class="btn btn-success rounded-pill px-4 fw-bold">অপেক্ষমান কাজ দেখুন</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

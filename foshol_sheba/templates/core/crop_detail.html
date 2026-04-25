@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ crop.name_bn }} - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row g-5">
+        <!-- Crop Info -->
+        <div class="col-lg-5">
+            <div class="rounded-5 overflow-hidden shadow-lg mb-4">
+                {% if crop.image %}
+                    <img src="{{ crop.image.url }}" alt="{{ crop.name_bn }}" class="img-fluid w-100">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center py-5">
+                        <span style="font-size: 10rem;">🌱</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-lg-7">
+            <h1 class="display-4 fw-800 text-success mb-2">{{ crop.name_bn }}</h1>
+            <h4 class="text-muted mb-4">{{ crop.name_en }}</h4>
+            
+            <div class="bg-white p-4 rounded-4 shadow-sm mb-5 border-start border-5 border-success">
+                <h5 class="fw-bold mb-3">পরিচিতি ও বিবরণ</h5>
+                <p class="text-muted lh-lg mb-0 text-justify">
+                    {{ crop.description_bn|default:"এই ফসল সম্পর্কে বিস্তারিত তথ্য শীঘ্রই যোগ করা হবে।" }}
+                </p>
+            </div>
+
+            <!-- Related Diseases -->
+            <h3 class="fw-bold mb-4">সংশ্লিষ্ট রোগব্যাধি 🦠</h3>
+            <div class="row g-3">
+                {% for disease in diseases %}
+                <div class="col-md-6">
+                    <a href="{% url 'core:disease_detail' disease.pk %}" class="text-decoration-none">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 h-100 transition-up">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light-danger text-danger p-3 rounded-3 me-3">
+                                    <span class="fs-4">🦠</span>
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h6 class="fw-bold text-dark mb-1 text-truncate">{{ disease.name_bn }}</h6>
+                                    <small class="text-muted">{{ disease.name_en }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted italic">এই ফসলের জন্য বর্তমানে কোনো রোগের তথ্য নেই।</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition-up {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .transition-up:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+    }
+    .bg-light-danger {
+        background-color: #ffebee;
+    }
+    .text-justify {
+        text-align: justify;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ disease.name_bn }} - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:disease_list' %}" class="text-success text-decoration-none">রোগব্যাধি</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ disease.name_bn }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden mb-4">
+                <div class="card-body p-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-light-success p-3 rounded-4 me-4">
+                            <span class="fs-1">🦠</span>
+                        </div>
+                        <div>
+                            <h1 class="fw-800 text-dark mb-1">{{ disease.name_bn }}</h1>
+                            <h5 class="text-muted">{{ disease.name_en }}</h5>
+                            <span class="badge bg-success rounded-pill px-3">{{ disease.crop.name_bn }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h4 class="fw-bold text-success mb-3 border-bottom pb-2">রোগের বিবরণ</h4>
+                        <p class="text-muted lh-lg text-justify">{{ disease.description_bn }}</p>
+                    </div>
+
+                    <div class="mb-5">
+                        <h4 class="fw-bold text-warning mb-3 border-bottom pb-2">রোগের লক্ষণসমূহ</h4>
+                        <div class="bg-light-warning p-4 rounded-4">
+                            <p class="text-dark mb-0 lh-lg">{{ disease.symptoms_bn }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-success-subtle h-100 rounded-4">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold text-success mb-3"><i class="bi bi-flower1 me-2"></i>প্রাকৃতিক প্রতিকার</h5>
+                                    <p class="text-dark small mb-0 lh-base">{{ disease.organic_remedy_bn }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-primary-subtle h-100 rounded-4">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-droplet-half me-2"></i>রাসায়নিক প্রতিকার</h5>
+                                    <p class="text-dark small mb-0 lh-base">{{ disease.chemical_treatment_bn }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-5 bg-success text-white p-4 mb-4">
+                <h5 class="fw-bold mb-3">প্রতিরোধমূলক ব্যবস্থা 🛡️</h5>
+                <p class="small opacity-90 lh-lg mb-0">
+                    {{ disease.preventative_measures_bn }}
+                </p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-5 p-4">
+                <h5 class="fw-bold mb-4 text-dark">অন্যান্য তথ্য</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="text-success me-3 fs-3"><i class="bi bi-patch-check"></i></div>
+                    <div>
+                        <small class="text-muted d-block">ভেরিফিকেশন স্ট্যাটাস</small>
+                        <span class="fw-bold text-dark">বিশেষজ্ঞ কর্তৃক ভেরিফাইড</span>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <p class="text-muted small mb-0">সঠিক নিশ্চিতকরণ ও প্রতিকারের জন্য এআই বিশ্লেষণ ব্যবহার করুন।</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light-success { background-color: #e8f5e9; }
+    .bg-light-warning { background-color: #fff3e0; border-left: 5px solid #ff9800; }
+    .bg-success-subtle { background-color: #edf7ed; }
+    .bg-primary-subtle { background-color: #e3f2fd; }
+    .text-justify { text-align: justify; }
+</style>
+{% endblock %}

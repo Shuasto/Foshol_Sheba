@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Explore Market Prices - FosholSheba{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-8">
+            <h1 class="fw-800 text-success">Live Market Prices 📈</h1>
+            <p class="text-muted small">Stay updated on crop prices across various local markets for better
+                decision-making.</p>
+        </div>
+        <div class="col-4 text-end">
+            <button class="btn btn-outline-success rounded-pill px-4 fw-bold shadow-sm">📍 My Local Market</button>
+        </div>
+    </div>
+
+    <!-- Pricing Search -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden border-0">
+                <input type="text" class="form-control border-0 py-3 px-4"
+                    placeholder="Search by crop, market, or district...">
+                <button class="btn btn-success px-5 fw-bold" type="submit">Refresh Prices</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Market Overview (Example Categories) -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 overlay-hidden p-4 mb-4 h-100">
+                <h6 class="fw-800 text-dark mb-4">Price Insights</h6>
+                <div class="mb-5 pb-4 border-bottom">
+                    <small class="text-muted text-uppercase fw-600 mb-1 d-block" style="font-size: 0.6rem;">Highest
+                        Gainer</small>
+                    <h5 class="fw-bold mb-1 text-success">Rice (BR-28)</h5>
+                    <p class="text-success small mb-0 fw-bold">+ 12% 📈</p>
+                </div>
+                <div class="mb-5 pb-4 border-bottom">
+                    <small class="text-muted text-uppercase fw-600 mb-1 d-block" style="font-size: 0.6rem;">Lowest
+                        Prive</small>
+                    <h5 class="fw-bold mb-1 text-danger">Potato</h5>
+                    <p class="text-danger small mb-0 fw-bold">- 5% 📉</p>
+                </div>
+                <div class="mt-auto">
+                    <p class="text-muted small">Based on reports from the Department of Agricultural Marketing.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Table -->
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden animate-up">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-success text-white">
+                            <tr>
+                                <th class="border-0 px-4 py-3">Crop Name</th>
+                                <th class="border-0 py-3">Market / District</th>
+                                <th class="border-0 py-3">Price / kg</th>
+                                <th class="border-0 py-3">Status</th>
+                                <th class="border-0 px-4 py-3 text-end">Last Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for price in prices %}
+                            <tr>
+                                <td class="px-4 py-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-light-success d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            <span class="fs-5">🌾</span>
+                                        </div>
+                                        <h6 class="fw-bold mb-0">{{ price.crop.name_en }} / {{ price.crop.name_bn }}
+                                        </h6>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0 fw-600 small">{{ price.market_name }}</h6>
+                                </td>
+                                <td>
+                                    <h5 class="fw-800 text-success mb-0">{{ price.price_per_kg }} TK</h5>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light-success text-success rounded-pill px-3 py-2 fw-bold"
+                                        style="font-size: 0.65rem;">Trending Up</span>
+                                </td>
+                                <td class="px-4 text-end text-muted small">
+                                    {{ price.updated_at|timesince }} ago
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-5 text-center text-muted">
+                                    No live prices available right now. Please check back later.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

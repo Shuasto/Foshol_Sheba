@@ -1,0 +1,141 @@
+{% load static %}
+{% load bn_numbers %}
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রোগ নির্ণয় রিপোর্ট - {{ result.detected_disease.crop.name_bn }}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tiro Bangla', sans-serif, Arial;
+            color: #333;
+            background: #fff;
+        }
+        .report-header {
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .report-title {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .highlight-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2e7d32;
+            padding: 15px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .img-container {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .crop-img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+        @media print {
+            body { 
+                padding: 0;
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print { display: none !important; }
+            .container { width: 100% !important; max-width: none !important; }
+            .badge, .bg-success, .bg-primary {
+                color: #fff !important;
+            }
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+<body onload="window.print();">
+    <div class="container py-4">
+        <div class="text-end mb-3 no-print">
+            <button class="btn btn-outline-secondary" onclick="window.close();">বন্ধ করুন</button>
+            <button class="btn btn-success" onclick="window.print();">প্রিন্ট করুন / PDF সেভ করুন</button>
+        </div>
+
+        <div class="report-header text-center">
+            <h1 class="report-title">ফসলসেবা - স্বয়ংক্রিয় রোগ নির্ণয় রিপোর্ট</h1>
+            <p class="mb-0 text-muted">তারিখ: {{ result.created_at|date:"d M Y, h:i A" }}</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th style="width: 150px;" class="text-muted">কৃষকের নাম:</th>
+                        <td>{{ result.user.get_full_name|default:result.user.username }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">ফসলের নাম:</th>
+                        <td>{{ result.detected_disease.crop.name_bn }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">শনাক্তকৃত রোগ:</th>
+                        <td class="text-danger fw-bold">{{ result.detected_disease.name_bn }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">নিশ্চয়তা (AI):</th>
+                        <td>{{ result.confidence_score|bn_number }}%</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-6 img-container">
+                {% if result.crop_image %}
+                <img src="{{ result.crop_image.url }}" class="crop-img" alt="ক্ষতিগ্রস্ত ফসলের ছবি">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h5 class="fw-bold text-dark">রোগের বিবরণ</h5>
+            <p class="mb-0">{{ result.detected_disease.description_bn|default:"এই রোগের কোনো বিবরণ পাওয়া যায়নি।" }}</p>
+        </div>
+
+        <div class="mb-4" style="page-break-inside: avoid;">
+            <h5 class="fw-bold text-danger border-bottom pb-2">লক্ষণসমূহ</h5>
+            <p>{{ result.detected_disease.symptoms_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+        </div>
+
+        <div class="mb-4" style="page-break-inside: avoid;">
+            <h5 class="fw-bold text-success border-bottom pb-2">প্রতিরোধ ব্যবস্থা</h5>
+            <p>{{ result.detected_disease.preventative_measures_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+        </div>
+
+        <div class="row" style="page-break-inside: avoid;">
+            <div class="col-6">
+                <div class="p-3 shadow-sm rounded border-start border-4 border-success h-100">
+                    <h6 class="fw-bold text-success">🌿 জৈব প্রতিকার</h6>
+                    <p class="mb-0 small">{{ result.detected_disease.organic_remedy_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="p-3 shadow-sm rounded border-start border-4 border-warning h-100">
+                    <h6 class="fw-bold text-warning">🧪 রাসায়নিক চিকিৎসা</h6>
+                    <p class="mb-0 small">{{ result.detected_disease.chemical_treatment_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 text-center text-muted small" style="page-break-inside: avoid;">
+            <hr>
+            <p class="mb-0">এই রিপোর্টটি ফসলসেবা এআই সিস্টেম দ্বারা স্বয়ংক্রিয়ভাবে তৈরি।</p>
+            <p>সঠিক রোগ নির্ণয়ের জন্য প্রয়োজনে স্থানীয় কৃষি বিশেষজ্ঞের পরামর্শ নিন।</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}নতুন পোস্ট - ফসলসেবা ফোরাম{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-5 p-5">
+                <h1 class="fw-800 text-success mb-4">নতুন আলোচনা শুরু করুন 💬</h1>
+                <p class="text-muted mb-5">আপনার সমস্যা, অভিজ্ঞতা বা কৃষি বিষয়ক যেকোনো তথ্য শেয়ার করুন।</p>
+                
+                <form action="{% url 'core:forum_create' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if diagnosis %}
+                    <input type="hidden" name="diagnosis_id" value="{{ diagnosis.pk }}">
+                    <div class="alert alert-success border-0 rounded-4 p-4 mb-4 d-flex align-items-center">
+                        <img src="{{ diagnosis.crop_image.url }}" class="rounded-3 me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                        <div>
+                            <h6 class="fw-bold mb-1">সংশ্লিষ্ট ফলাফল: {{ diagnosis.detected_disease.name_bn }}</h6>
+                            <p class="mb-0 small text-muted">এই ডায়াগনস্টিক ফলাফলটি আপনার পোস্টের সাথে যুক্ত করা হবে।</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">শিরোনাম</label>
+                        <input type="text" name="title" value="{{ initial_title }}" class="form-control rounded-4 border-0 bg-light p-3" placeholder="সংক্ষিপ্ত ও অর্থবহ শিরোনাম দিন" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">বিস্তারিত বিবরণ</label>
+                        <textarea name="content" class="form-control rounded-4 border-0 bg-light p-3" rows="8" placeholder="আপনার কথাগুলো এখানে বিস্তারিত লিখুন..." required>{{ initial_content }}</textarea>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label fw-bold text-dark">ছবি সংযুক্ত করুন (ঐচ্ছিক)</label>
+                        <div class="input-group">
+                            <input type="file" name="image" class="form-control rounded-4 border-0 bg-light p-3" id="inputGroupFile02">
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm">
+                            <i class="bi bi-send me-2"></i> ফোরামে পোস্ট করুন
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

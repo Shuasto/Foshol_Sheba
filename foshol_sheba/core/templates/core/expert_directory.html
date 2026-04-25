@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}কৃষি বিশেষজ্ঞ ডিরেক্টরি - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="text-center mb-5 animate-up">
+        <h1 class="fw-800 text-dark mb-3">কৃষি বিশেষজ্ঞ ডিরেক্টরি 🧑‍🌾</h1>
+        <p class="text-muted lead mx-auto" style="max-width: 600px;">
+            আমাদের অভিজ্ঞ কৃষি বিশেষজ্ঞদের সাথে পরিচিত হোন যারা আপনাকে ফসল উৎপাদন ও রোগবালাই দমনে সঠিক দিকনির্দেশনা দিতে প্রস্তুত।
+        </p>
+    </div>
+
+    <div class="row g-4">
+        {% for expert in experts %}
+        <div class="col-md-6 col-lg-4 animate-up" style="animation-delay: 0.1s;">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative">
+                <div class="bg-success pb-5 pt-4 text-center position-relative">
+                    {% if expert.user.profile_picture %}
+                        <img src="{{ expert.user.profile_picture.url }}" class="rounded-circle border border-4 border-white shadow-sm" style="width: 100px; height: 100px; object-fit: cover; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); z-index: 2;" alt="Profile Picture">
+                    {% else %}
+                        <div class="rounded-circle border border-4 border-white shadow-sm bg-white d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); z-index: 2;">
+                            <span class="fs-1 text-success">👤</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body pt-5 mt-3 text-center d-flex flex-column">
+                    <h5 class="fw-bold mb-1">{{ expert.user.first_name }} {{ expert.user.last_name }}</h5>
+                    <p class="text-success small fw-semibold mb-2">{{ expert.specialization }}</p>
+                    
+                    <div class="d-flex justify-content-center gap-2 mb-3 flex-wrap">
+                        <span class="badge bg-light text-dark shadow-sm">
+                            <i class="bi bi-briefcase-fill text-muted me-1"></i> {{ expert.experience_years|bn_number }} বছরের অভিজ্ঞতা
+                        </span>
+                        {% if expert.is_verified_by_admin %}
+                        <span class="badge bg-success-subtle text-success shadow-sm">
+                            <i class="bi bi-patch-check-fill me-1"></i> ভেরিফাইড
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if expert.organization_association %}
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-building me-1"></i> {{ expert.organization_association }}
+                    </p>
+                    {% endif %}
+                    
+                    <p class="text-muted small text-start px-2 mb-4 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ expert.qualification }}
+                    </p>
+                </div>
+                <!-- Card Footer Action -->
+                <div class="card-footer bg-white border-top-0 pb-4 px-4 text-center mt-auto">
+                    <button class="btn btn-outline-success rounded-pill px-4 w-100 disabled" title="অ্যাডভান্সড ফিচার শীঘ্রই আসছে">
+                        <i class="bi bi-chat-dots me-2"></i> পরামর্শ নিন (শীঘ্রই আসছে)
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-light rounded-4 shadow-sm border border-dashed">
+                <span class="fs-1 d-block mb-3">👨‍🌾</span>
+                <h4 class="fw-bold text-muted mb-2">বর্তমানে কোনো ভেরিফাইড বিশেষজ্ঞ নেই</h4>
+                <p class="text-muted mb-0">শীঘ্রই আমাদের বিশেষজ্ঞ প্যানেল আপডেট করা হবে।</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .bg-success-subtle { background-color: #d1e7dd; }
+    .border-dashed { border-style: dashed !important; border-width: 2px !important; }
+</style>
+{% endblock %}

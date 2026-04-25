@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - ফসলসেবা ফোরাম{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:forum_list' %}" class="text-success text-decoration-none">ফোরাম</a></li>
+            <li class="breadcrumb-item active" aria-current="page">আলোচনা বিস্তারিত</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+                <div class="card-body p-5">
+                    <div class="d-flex align-items-center mb-4">
+                        {% if post.user.profile_picture %}
+                            <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span class="fs-4">👤</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h5 class="fw-bold mb-0 text-dark">{{ post.user.get_full_name|default:post.user.username }}</h5>
+                            <small class="text-muted">{{ post.created_at|date:"d M, Y" }} | ফোরাম পোস্ট</small>
+                        </div>
+                    </div>
+
+                    <h1 class="fw-800 text-dark mb-4">{{ post.title }}</h1>
+                    
+                    <div class="text-muted lh-lg mb-5" style="white-space: pre-line;">
+                        {{ post.content }}
+                    </div>
+
+                    {% if post.image or post.related_diagnosis %}
+                        <div class="rounded-5 overflow-hidden mb-5 shadow-sm">
+                            {% if post.related_diagnosis %}
+                                <img src="{{ post.related_diagnosis.crop_image.url }}" class="w-100">
+                            {% elif post.image %}
+                                <img src="{{ post.image.url }}" class="w-100">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if post.related_diagnosis %}
+                        <div class="alert alert-success border-0 rounded-4 p-4 mb-5">
+                            <h6 class="fw-bold mb-2">সংযুক্ত রোগ নির্ণয় ফলাফল:</h6>
+                            <p class="mb-3 small">ফসল: {{ post.related_diagnosis.crop.name_bn }} | শনাক্তকৃত রোগ: {{ post.related_diagnosis.detected_disease.name_bn|default:"অজানা" }}</p>
+                            <a href="{% url 'farmers:diagnostic_result' post.related_diagnosis.pk %}" class="btn btn-success btn-sm rounded-pill px-4">বিস্তারিত রিপোর্ট দেখুন</a>
+                        </div>
+                    {% endif %}
+
+                    <hr class="my-5">
+
+                    <!-- Comments Section -->
+                    <h4 class="fw-bold mb-4">মন্তব্যসমূহ ({{ post.comments.count }})</h4>
+                    
+                    {% for comment in post.comments.all %}
+                    <div class="d-flex mb-4">
+                        <div class="bg-light-success rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                            <span class="small">👤</span>
+                        </div>
+                        <div class="bg-light rounded-4 p-3 flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="fw-bold mb-0 small">{{ comment.user.get_full_name|default:comment.user.username }}</h6>
+                                <small class="text-muted" style="font-size: 0.7rem;">{{ comment.created_at|date:"d M, Y" }}</small>
+                            </div>
+                            <p class="mb-0 small text-muted">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted italic small mb-5">এখনো কোনো মন্তব্য নেই। আপনার মতামত জানান!</p>
+                    {% endfor %}
+
+                    <!-- Add Comment Form -->
+                    <div class="mt-5">
+                        <h5 class="fw-bold mb-3">আপনার মন্তব্য লিখুন</h5>
+                        {% if user.is_authenticated %}
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <textarea name="content" class="form-control rounded-4 border-0 bg-light p-3 mb-3" rows="3" placeholder="এখানে লিখুন..." required></textarea>
+                            <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">মন্তব্য করুন</button>
+                        </form>
+                        {% else %}
+                        <div class="bg-light p-4 rounded-4 text-center">
+                            <p class="mb-0">মন্তব্য করতে দয়া করে <a href="{% url 'core:login' %}" class="text-success fw-bold">লগ ইন</a> করুন।</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top author-sidebar" style="top: 100px;">
+                <h5 class="fw-bold mb-4">লেখক পরিচিতি</h5>
+                <div class="text-center mb-4">
+                    {% if post.user.profile_picture %}
+                        <img src="{{ post.user.profile_picture.url }}" class="rounded-circle mb-3 shadow-sm border border-3 border-white" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 100px; height: 100px;">
+                            <span class="fs-1 text-success">👤</span>
+                        </div>
+                    {% endif %}
+                    <h5 class="fw-bold text-dark mb-1">{{ post.user.get_full_name|default:post.user.username }}</h5>
+                    <span class="badge bg-light text-success rounded-pill px-3">{{ post.user.get_role_display }}</span>
+                    {% if post.user.district %}
+                        <p class="text-muted small mt-2 mb-0"><i class="bi bi-geo-alt me-1"></i> {{ post.user.upazila }}, {{ post.user.district }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="row g-2 text-center border-top pt-4 mb-4">
+                    <div class="col-4">
+                        <h6 class="fw-bold mb-0 text-dark">{{ post.user.communitypost_set.count }}</h6>
+                        <small class="text-muted" style="font-size: 0.7rem;">পোস্ট</small>
+                    </div>
+                    <div class="col-4 border-start border-end">
+                        <h6 class="fw-bold mb-0 text-dark">{{ post.user.comment_set.count }}</h6>
+                        <small class="text-muted" style="font-size: 0.7rem;">মন্তব্য</small>
+                    </div>
+                    <div class="col-4">
+                        <h6 class="fw-bold mb-0 text-dark">{{ post.user.diagnostic_histories.count }}</h6>
+                        <small class="text-muted" style="font-size: 0.7rem;">স্ক্যান</small>
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <h6 class="fw-bold small text-muted mb-3">অর্জন ও ব্যাজ 🏅</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for badge in author_badges %}
+                            <span class="badge bg-light-success text-success border border-success border-opacity-25 rounded-pill px-2 py-1 small" title="{{ badge.description }}">
+                                {{ badge.icon }} {{ badge.title }}
+                            </span>
+                        {% empty %}
+                            <span class="badge bg-light text-muted border rounded-pill px-2 py-1 small italic">কোনো ব্যাজ নেই</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light-success { background-color: #e8f5e9; }
+</style>
+{% endblock %}

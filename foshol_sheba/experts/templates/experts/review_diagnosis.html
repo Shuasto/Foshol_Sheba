@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}রোগ নির্ণয় পর্যালোচনা - বিশেষজ্ঞ পোর্টাল{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row g-5">
+        <!-- Scan Image and Basic Info -->
+        <div class="col-lg-5 animate-up">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <img src="{{ record.crop_image.url }}" class="w-100 h-auto" alt="স্ক্যান করা ছবি">
+                <div class="p-4 bg-light border-top">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-success px-3">{{ record.detected_disease.crop.name_bn }}</span>
+                        <small class="text-muted">{{ record.created_at|date:"d M Y, h:i A" }}</small>
+                    </div>
+                    <h5 class="fw-bold mb-0">এআই শনাক্তকরণ: {{ record.detected_disease.name_bn }}</h5>
+                    <p class="text-success small fw-bold mb-0">নির্ভরযোগ্যতা: {{ record.confidence_score|bn_number }}%</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h6 class="fw-bold mb-3">কৃষকের তথ্য</h6>
+                <div class="d-flex align-items-center">
+                    <img src="{{ record.user.profile_picture.url|default:'https://ui-avatars.com/api/?name='|add:record.user.username }}"
+                        class="rounded-circle me-3" width="40" height="40" alt="">
+                    <div>
+                        <h6 class="mb-0 small fw-bold">{{ record.user.first_name }} {{ record.user.last_name }}</h6>
+                        <p class="text-muted extra-small mb-0">{{ record.user.district }}, {{ record.user.upazila }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validation Form -->
+        <div class="col-lg-7 animate-up delay-1">
+            <div class="card border-0 shadow-lg rounded-4 p-5 h-100">
+                <h2 class="fw-800 text-dark mb-4">বিশেষজ্ঞের যাচাইকরণ</h2>
+                <p class="text-muted small mb-5">অনুগ্রহ করে এআই শনাক্তকরণ ফলাফল পর্যালোচনা করুন এবং আপনার পেশাদার
+                    যাচাইকরণ বা সংশোধন প্রদান করুন। আপনার পরামর্শ সরাসরি কৃষকের কাছে পাঠানো হবে।</p>
+
+                    <!-- Expert Feedback -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-success">কৃষকের জন্য পরামর্শ / বিধান (বাংলা) *</label>
+                        <textarea class="form-control mb-2 border-success" name="advice_bn" rows="6"
+                            placeholder="রোগের সত্যতা নিশ্চিত করুন এবং কৃষকের জন্য নির্দিষ্ট জৈব বা রাসায়নিক প্রতিকার প্রদান করুন..." required></textarea>
+                        <small class="text-muted">আপনার এই পরামর্শটি সরাসরি কৃষকের ড্যাশবোর্ডে "বিশেষজ্ঞের যাচাইকৃত ফলাফল" হিসেবে প্রদর্শিত হবে।</small>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold shadow">
+                            <i class="bi bi-check-circle me-2"></i> পেশাদার যাচাইকরণ জমা দিন
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

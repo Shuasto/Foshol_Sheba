@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}বিশেষজ্ঞ ড্যাশবোর্ড - ফসলসেবা{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        background: white;
+    }
+
+    .pending-card {
+        border-left: 5px solid #ffa000;
+        transition: transform 0.3s;
+    }
+
+    .pending-card:hover {
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-7">
+            <h1 class="fw-800 text-success">বিশেষজ্ঞ ড্যাশবোর্ড 🔬</h1>
+            <p class="text-muted">রোগ নির্ণয় পর্যালোচনা করুন এবং পেশাদার যাচাই প্রদান করুন।</p>
+        </div>
+        <div class="col-md-5 text-md-end">
+            <div class="badge bg-light text-success fw-bold px-3 py-2 border border-success">
+                বিশেষজ্ঞের অবস্থা: <span class="text-uppercase">{{ user.expert_profile.is_verified_by_admin|yesno:"সক্রিয়,অপেক্ষমান" }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if is_profile_incomplete %}
+    <!-- Profile Completion Alert -->
+    <div class="alert alert-warning border-0 shadow-sm rounded-4 p-4 mb-5 d-flex flex-column flex-md-row align-items-center justify-content-between">
+        <div class="d-flex align-items-center mb-3 mb-md-0">
+            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3">
+                <span class="fs-3">👤</span>
+            </div>
+            <div>
+                <h5 class="fw-800 mb-1 text-dark">আপনার প্রোফাইলটি অসম্পূর্ণ!</h5>
+                <p class="mb-0 text-muted">অনুগ্রহ করে আপনার যোগ্যতাসমূহ ও অন্যান্য তথ্য যুক্ত করে প্রোফাইলটি সম্পূর্ণ করুন।</p>
+            </div>
+        </div>
+        <a href="{% url 'experts:edit_profile' %}" class="btn btn-warning fw-bold rounded-pill px-4 py-2 shadow-sm">
+            ✏️ তথ্য প্রদান করুন
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="row g-4 mb-5">
+        <!-- Quick Stats for Experts -->
+        <div class="col-md-4">
+            <div class="dashboard-card p-4 text-center position-relative h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="fs-1 mb-2">✅</div>
+                <h3 class="fw-800 mb-0">{{ my_advices_count|bn_number }}</h3>
+                <p class="text-muted small mb-3">মোট যাচাইকরণ</p>
+                {% comment %} <a href="{% url 'experts:review_history' %}" class="btn btn-outline-success btn-sm rounded-pill fw-bold px-4">ইতিহাস দেখুন</a> {% endcomment %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboard-card p-4 text-center">
+                <div class="fs-1">⏳</div>
+                <h3 class="fw-800 mb-0 text-warning">{{ pending_tasks|length|bn_number }}</h3>
+                <p class="text-muted small">অপেক্ষমান পর্যালোচনা</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboard-card p-4 text-center">
+                <div class="fs-1">🌟</div>
+                <h3 class="fw-800 mb-0 text-success">{{ "৪.৯"|bn_number }}</h3>
+                <p class="text-muted small">বিশেষজ্ঞ রেটিং</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h4 class="fw-800 text-dark mb-0">যাচাইয়ের জন্য অপেক্ষমান রোগ নির্ণয়</h4>
+        <div class="btn-group shadow-sm">
+            <button class="btn btn-outline-success btn-sm px-3 fw-bold">সাম্প্রতিক</button>
+            <button class="btn btn-outline-success btn-sm px-3 fw-bold">জরুরী</button>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for task in pending_tasks %}
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card p-4 h-100 pending-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge bg-light text-warning px-3 rounded-pill">এআই স্কোর: {{ task.confidence_score|bn_number }}%</span>
+                    <small class="text-muted">{{ task.created_at|date:"d M, Y" }}</small>
+                </div>
+                <div class="mb-3 overflow-hidden rounded-3" style="height: 150px;">
+                    <img src="{{ task.crop_image.url }}" alt="Scan" class="w-100 h-100 object-fit-cover">
+                </div>
+                <h6 class="fw-800 mb-1">ফসল: {{ task.detected_disease.crop.name_bn }}</h6>
+                <p class="text-muted small mb-3">এআই মতে এটি: <strong>{{ task.detected_disease.name_bn }}</strong>
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'core:review_diagnosis' task.pk %}"
+                        class="btn btn-success btn-sm rounded-pill fw-bold">পর্যালোচনা ও যাচাই করুন</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="fs-1 mb-3">🎉</div>
+            <h5 class="text-muted fw-bold">সব কাজ সম্পন্ন! বর্তমানে কোনো অপেক্ষমান কাজ নেই।</h5>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

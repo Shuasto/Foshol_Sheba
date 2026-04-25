@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}যোগাযোগ - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="bg-white shadow-lg rounded-4 overflow-hidden animate-up">
+                <div class="row g-0">
+                    <div class="col-lg-5 bg-success p-5 text-white">
+                        <h2 class="fw-800 mb-4">যোগাযোগের তথ্য</h2>
+                        <p class="mb-5 opacity-75">আমরা আপনাকে সাহায্য করতে প্রস্তুত! ফরমটি পূরণ করুন এবং আমাদের টিম ২৪ ঘণ্টার মধ্যে আপনার সাথে যোগাযোগ করবে।</p>
+
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="fs-4 me-3">📍</span>
+                            <div class="small">
+                                <h6 class="fw-bold mb-0">আমাদের অফিস</h6>
+                                <p class="mb-0 text-white-50">১২৩ এগ্রিকালচার লেন, ঢাকা, বাংলাদেশ</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="fs-4 me-3">📞</span>
+                            <div class="small">
+                                <h6 class="fw-bold mb-0">ফোন</h6>
+                                <p class="mb-0 text-white-50">+৮৮০ ১২৩৪ ৫৬৭৮৯০</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="fs-4 me-3">✉️</span>
+                            <div class="small">
+                                <h6 class="fw-bold mb-0">ইমেইল</h6>
+                                <p class="mb-0 text-white-50">support@fosholsheba.com</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-5 opacity-25">
+                            <span class="display-1">🌾</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 p-5">
+                        <h3 class="fw-800 text-dark mb-4">বার্তা পাঠান</h3>
+                        <form action="#">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">পূর্ণ নাম</label>
+                                    <input type="text" class="form-control" placeholder="রহিম আহমেদ">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">ইমেইল ঠিকানা</label>
+                                    <input type="email" class="form-control" placeholder="rahim@example.com">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">বিষয়</label>
+                                    <input type="text" class="form-control" placeholder="আমি একটি প্রশ্ন করতে চাই...">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-bold">বার্তা</label>
+                                    <textarea class="form-control" rows="5"
+                                        placeholder="আপনার বার্তা এখানে লিখুন..."></textarea>
+                                </div>
+                                <div class="col-12 mt-4 text-end">
+                                    <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow">বার্তা পাঠান</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

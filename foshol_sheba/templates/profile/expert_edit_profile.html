@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}তথ্য পরিবর্তন করুন - ফসলসেবা{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-header {
+        background: linear-gradient(135deg, #2e7d32 0%, #81c784 100%);
+        height: 150px;
+        border-radius: 0 0 40px 40px;
+        margin-top: 80px;
+        margin-bottom: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .form-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        background: white;
+        padding: 40px;
+        margin-bottom: 30px;
+    }
+
+    .info-label {
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-control:focus {
+        border-color: #81c784;
+        box-shadow: 0 0 0 0.25rem rgba(129, 199, 132, 0.25);
+    }
+
+    .save-btn {
+        background: #2e7d32;
+        color: white;
+        padding: 12px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .save-btn:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+    }
+
+    .preview-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #81c784;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-header">
+    <h2 class="fw-800">✏️ বিশেষজ্ঞ প্রোফাইল তথ্য আপডেট করুন</h2>
+</div>
+
+<div class="container mb-5">
+    <form method="post" enctype="multipart/form-data" id="profile-form">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Left Side: Basic Info -->
+            <div class="col-lg-8">
+                <div class="form-card">
+                    <h4 class="fw-800 text-success mb-4 border-bottom pb-2">ব্যক্তিগত তথ্য</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="info-label">প্রথম নাম</label>
+                            {{ user_form.first_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="info-label">শেষ নাম</label>
+                            {{ user_form.last_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="info-label">ইমেইল ঠিকানা</label>
+                            {{ user_form.email }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="info-label">মোবাইল নম্বর</label>
+                            {{ user_form.phone_no }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="info-label">জেলা</label>
+                            {{ user_form.district }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="info-label">উপজেলা</label>
+                            {{ user_form.upazila }}
+                        </div>
+                        <div class="col-12">
+                            <label class="info-label">বিস্তারিত ঠিকানা</label>
+                            {{ user_form.address }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h4 class="fw-800 text-success mb-4 border-bottom pb-2">পেশাগত তথ্য</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="info-label">বিশেষত্ব</label>
+                            {{ profile_form.specialization }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="info-label">অভিজ্ঞতা (বছর)</label>
+                            {{ profile_form.experience_years }}
+                        </div>
+                        <div class="col-md-12">
+                            <label class="info-label">যোগ্যতা</label>
+                            {{ profile_form.qualification }}
+                        </div>
+                        <div class="col-md-12">
+                            <label class="info-label">বর্তমান কর্মস্থল বা সংস্থা</label>
+                            {{ profile_form.organization_association }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Profile Picture & Actions -->
+            <div class="col-lg-4">
+                <div class="form-card text-center">
+                    <h4 class="fw-800 text-success mb-4 border-bottom pb-2">প্রোফাইল ছবি</h4>
+                    
+                    {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile" class="preview-img" id="img-preview">
+                    {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=81c784&color=fff&size=150" alt="Profile" class="preview-img" id="img-preview">
+                    {% endif %}
+
+                    <div class="mb-3">
+                        {{ user_form.profile_picture }}
+                    </div>
+                    <p class="text-muted small">JPG, PNG বা GIF ফরম্যাটে ৩ মেগাবাইটের কম ছবি আপলোড করুন।</p>
+                </div>
+
+                <div class="mt-4 d-grid gap-2">
+                    <button type="submit" class="save-btn">✅ তথ্য সংরক্ষণ করুন</button>
+                    <a href="{% url 'core:profile' %}" class="btn btn-outline-secondary rounded-pill py-2">বাতিল করুন</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Image Preview
+    const imgInput = document.querySelector('input[type="file"]');
+    const imgPreview = document.getElementById('img-preview');
+
+    imgInput.onchange = evt => {
+        const [file] = imgInput.files;
+        if (file) {
+            imgPreview.src = URL.createObjectURL(file);
+        }
+    }
+</script>
+{% endblock %}

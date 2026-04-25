@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}কোম্পানি ড্যাশবোর্ড - ফসলসেবা{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        background: white;
+    }
+
+    .product-list-item {
+        transition: transform 0.2s;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    .product-list-item:hover {
+        transform: scale(1.01);
+        background-color: #f1f8e9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-8">
+            <h1 class="fw-800 text-success">কোম্পানি ড্যাশবোর্ড 🏭</h1>
+            <p class="text-muted">আপনার সার এবং কীটনাশকসমূহ ব্যবস্থাপনা করুন।</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="#" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                + নতুন পণ্য যোগ করুন
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Dashboard Summary Stats for Company -->
+        <div class="col-md-4">
+            <div class="dashboard-card p-4 text-center">
+                <div class="fs-1">📦</div>
+                <h3 class="fw-800 mb-0">{{ products|length|bn_number }}</h3>
+                <p class="text-muted small">সক্রিয় পণ্য</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboard-card p-4 text-center">
+                <div class="fs-1">📈</div>
+                <h3 class="fw-800 mb-0">{{ "১.২"|bn_number }} হাজার</h3>
+                <p class="text-muted small">মোট ক্লিক/ভিউ</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="dashboard-card p-4 text-center">
+                <div class="fs-1">💬</div>
+                <h3 class="fw-800 mb-0">{{ "৪৫"|bn_number }}</h3>
+                <p class="text-muted small">নতুন অনুসন্ধান</p>
+            </div>
+        </div>
+
+        <!-- Product Management Section -->
+        <div class="col-12 mt-5">
+            <div class="dashboard-card p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-800 mb-0">আপনার নিবন্ধিত পণ্যসমূহ</h5>
+                    <div class="input-group w-50 shadow-sm">
+                        <span class="input-group-text bg-white border-end-0"><span class="small">🔍</span></span>
+                        <input type="text" class="form-control border-start-0" placeholder="পণ্য খুঁজুন...">
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush">
+                    {% for product in products %}
+                    <div class="list-group-item d-flex align-items-center product-list-item p-3 border-0 mb-2">
+                        <div class="me-3">
+                            <img src="{{ product.image.url }}" alt="" class="rounded-3" width="60" height="60"
+                                style="object-fit: cover;">
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1">{{ product.name }}</h6>
+                            <p class="text-muted small mb-0">{{ product.category }} • {{
+                                product.crops.count|bn_number }}টি ফসলের জন্য</p>
+                        </div>
+                        <div class="text-end me-4">
+                            <span
+                                class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill shadow-sm">যাচাইকৃত</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-success btn-sm rounded-pill px-3">বিস্তারিত পরিবর্তন</button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <div class="fs-1 mb-3">🛒</div>
+                        <h6 class="text-muted">কোনো পণ্য পাওয়া যায়নি। আপনার পণ্য তালিকাভুক্ত করা শুরু করুন!</h6>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

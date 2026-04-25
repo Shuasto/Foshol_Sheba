@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ড্যাশবোর্ড - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="dashboard-card bg-white p-5 text-center shadow-lg rounded-4 animate-up">
+                <div class="mb-4">
+                    <span class="fs-1 d-block mb-3">🛠️</span>
+                    <h1 class="fw-800 text-success">প্রধান নিয়ন্ত্রণ কেন্দ্র</h1>
+                    <p class="text-muted lead">আপনার স্মার্ট কৃষি হাবে স্বাগতম। শুরু করতে একটি অপশন নির্বাচন করুন।
+                    </p>
+                </div>
+
+                <div class="row g-4 mt-4">
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded-4 transition-up h-100 bg-light">
+                            <span class="fs-2 d-block mb-3">🌿</span>
+                            <h5 class="fw-bold">আমার ফসল</h5>
+                            <p class="text-muted small">আপনার ফসলের স্বাস্থ্য ব্যবস্থাপনা এবং ইতিহাস দেখুন।</p>
+                            <a href="{% url 'farmers:diagnostic_history' %}"
+                                class="btn btn-outline-success btn-sm rounded-pill mt-2">রেকর্ড দেখুন</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded-4 transition-up h-100 bg-light">
+                            <span class="fs-2 d-block mb-3">👥</span>
+                            <h5 class="fw-bold">কমিউনিটি</h5>
+                            <p class="text-muted small">প্রশ্ন জিজ্ঞাসা করুন এবং আপনার জ্ঞান ভাগ করুন।</p>
+                            <a href="{% url 'core:forum_list' %}"
+                                class="btn btn-outline-success btn-sm rounded-pill mt-2">ফোরাম খুলুন</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded-4 transition-up h-100 bg-light">
+                            <span class="fs-2 d-block mb-3">💰</span>
+                            <h5 class="fw-bold">বাজার</h5>
+                            <p class="text-muted small">সর্বশেষ দর এবং প্রবণতা পরীক্ষা করুন।</p>
+                            <a href="{% url 'core:marketprice_full_view' %}"
+                                class="btn btn-outline-success btn-sm rounded-pill mt-2">দর যাচাই করুন</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Specific Shortcut -->
+                <div class="mt-5 pt-4 border-top">
+                    <p class="text-muted small mb-3">আপনার ভূমিকার জন্য দ্রুত অ্যাক্সেস: <strong>{{ user.get_role_display
+                            }}</strong></p>
+                    {% if user.role == 'farmer' %}
+                    <a href="{% url 'farmers:dashboard' %}" class="btn btn-success rounded-pill px-5 fw-bold shadow">কৃষক ড্যাশবোর্ডে যান</a>
+                    {% elif user.role == 'expert' %}
+                    <a href="{% url 'core:expert_dashboard' %}" class="btn btn-success rounded-pill px-5 fw-bold shadow">বিশেষজ্ঞ ড্যাশবোর্ডে যান</a>
+                    {% elif user.role == 'company' %}
+                    <a href="{% url 'core:company_dashboard' %}" class="btn btn-success rounded-pill px-5 fw-bold shadow">কোম্পানি ড্যাশবোর্ডে যান</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

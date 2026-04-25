@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ফসল নির্ণয় - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="bg-success p-5 text-white text-center position-relative">
+                    <h2 class="fw-800 mb-2">ফসলের রোগ শনাক্ত করুন</h2>
+                    <p class="mb-0 opacity-75">আক্রান্ত পাতার একটি পরিষ্কার ছবি আপলোড করুন বা তুলুন।</p>
+                    <div class="position-absolute end-0 top-0 p-4 opacity-25">
+                        <span class="fs-1">📸</span>
+                    </div>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data" id="uploadForm">
+                        {% csrf_token %}
+                        <!-- Upload Area -->
+                        <div class="upload-zone mb-4" id="dropZone">
+                            <input type="file" name="crop_image" id="fileInput" class="d-none" accept="image/*"
+                                required>
+                            <label for="fileInput"
+                                class="w-100 py-5 border-2 border-dashed border-success rounded-4 text-center cursor-pointer bg-light d-block transition-up">
+                                <span class="fs-1 d-block mb-3">📁</span>
+                                <h5 class="fw-bold text-success mb-1" id="fileName">ছবি নির্বাচন করুন বা এখানে টেনে আনুন</h5>
+                                <p class="text-muted small mb-0">১০ এমবি পর্যন্ত JPEG, PNG</p>
+                            </label>
+                        </div>
+
+                        <!-- Progress (Hidden by default) -->
+                        <div id="uploadProgress" class="d-none mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted small">ফসলের স্বাস্থ্য বিশ্লেষণ করা হচ্ছে...</span>
+                                <span class="text-success small fw-bold" id="percent">০%</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg rounded-pill fw-bold py-3 shadow">
+                                স্মার্ট বিশ্লেষণ শুরু করুন
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-5">
+                        <h6 class="fw-bold mb-3 text-dark">সেরা ফলাফলের জন্য কিছু টিপস:</h6>
+                        <ul class="text-muted small">
+                            <li>পাতাটি পর্যাপ্ত আলোতে এবং ফোকাসে আছে কিনা নিশ্চিত করুন।</li>
+                            <li>একবারে কেবল একটি পাতার ছবি তুলুন।</li>
+                            <li>পাতার আক্রান্ত অংশটি পরিষ্কারভাবে অন্তর্ভুক্ত করুন।</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+        if (this.files && this.files[0]) {
+            document.getElementById('fileName').textContent = this.files[0].name;
+            document.getElementById('dropZone').classList.add('bg-white');
+        }
+    });
+</script>
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .border-dashed {
+        border-style: dashed !important;
+    }
+</style>
+{% endblock %}

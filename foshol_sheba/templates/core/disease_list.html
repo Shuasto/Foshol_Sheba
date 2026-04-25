@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}রোগব্যাধি ডিরেক্টরি - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-6">
+            <h1 class="fw-800 text-success">রোগব্যাধি ডিরেক্টরি 🦠</h1>
+            <p class="text-muted">বিভিন্ন ফসলের রোগ, লক্ষণ এবং প্রতিকার সম্পর্কে জানুন।</p>
+        </div>
+        <div class="col-md-6">
+            <form action="" method="GET" class="d-flex shadow-sm rounded-pill overflow-hidden bg-white p-1 border">
+                <input type="text" name="q" value="{{ query }}" class="form-control border-0" placeholder="রোগের নাম বা ফসল লিখে খুঁজুন..." aria-label="Search">
+                <button class="btn btn-success rounded-pill px-4 fw-bold" type="submit">খুঁজুন</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for disease in diseases %}
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'core:disease_detail' disease.pk %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 h-100 transition-up">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-light-success px-3 py-1 rounded-pill me-auto">
+                                <small class="fw-bold text-success">{{ disease.crop.name_bn }}</small>
+                            </div>
+                            {% if disease.is_expert_verified %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                    <i class="bi bi-check-circle-fill me-1"></i> ভেরিফাইড
+                                </span>
+                            {% endif %}
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ disease.name_bn }}</h5>
+                        <p class="text-muted small mb-3">{{ disease.name_en }}</p>
+                        
+                        <div class="text-muted small mb-0 text-truncate-2">
+                            {{ disease.description_bn|truncatechars:100 }}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="card border-0 shadow-sm rounded-4 p-5 bg-light">
+                <div class="fs-1 mb-3">🔍</div>
+                <h5 class="fw-bold text-muted">কোনো রোগের তথ্য পাওয়া যায়নি।</h5>
+                <p class="text-muted small">অন্য কোনো নাম দিয়ে চেষ্টা করুন।</p>
+                <a href="?" class="btn btn-outline-success rounded-pill px-4 mt-3 fw-bold">সবগুলো দেখুন</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .transition-up {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .transition-up:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+    }
+    .bg-light-success {
+        background-color: #e8f5e9;
+    }
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

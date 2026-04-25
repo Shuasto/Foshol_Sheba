@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Forum Detail - FosholSheba{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row g-5">
+        <!-- Main Post Area -->
+        <div class="col-lg-8 animate-up">
+            <div class="card border-0 shadow-sm rounded-4 p-5 mb-5 overflow-hidden position-relative">
+                <div class="d-flex align-items-center mb-4">
+                    <img src="{{ post.user.profile_picture.url|default:'https://ui-avatars.com/api/?name='|add:post.user.username }}"
+                        class="rounded-circle shadow-sm me-3" width="50" height="50" alt="">
+                    <div>
+                        <h6 class="fw-bold text-success mb-0">{{ post.user.username }}</h6>
+                        <small class="text-muted">{{ post.user.get_role_display }} • {{ post.created_at|date:"d M Y, h:i
+                            A" }}</small>
+                    </div>
+                    {% if post.user.role == 'expert' %}
+                    <span
+                        class="ms-auto badge bg-light text-success border border-success rounded-pill px-3 py-2 fw-bold small">Certified
+                        Expert 🔬</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="fw-800 text-dark mb-4">{{ post.title }}</h1>
+                <p class="text-muted lead mb-5 small">{{ post.content|linebreaks }}</p>
+
+                {% if post.image %}
+                <div class="mb-5 overflow-hidden rounded-4 shadow">
+                    <img src="{{ post.image.url }}" alt="Post image" class="w-100 h-auto">
+                </div>
+                {% endif %}
+
+                <div class="d-flex gap-4 text-muted small border-top pt-4 mt-5">
+                    <span class="fw-bold"><span class="me-1">💬</span> {{ post.comments.count }} Comments</span>
+                    <span class="fw-bold"><span class="me-1">👁️</span> 782 Views</span>
+                    <button class="btn btn-link text-success p-0 fw-bold underline-none ms-auto">Share Post</button>
+                </div>
+            </div>
+
+            <!-- Comment Section -->
+            <div class="mb-5">
+                <h4 class="fw-800 text-dark mb-4">Conversation</h4>
+                <div class="list-group list-group-flush mb-5">
+                    {% for comment in post.comments.all %}
+                    <div
+                        class="list-group-item d-flex p-4 border-0 mb-3 bg-white rounded-4 shadow-sm animate-up delay-{{ forloop.counter0 }}">
+                        <img src="{{ comment.user.profile_picture.url|default:'https://ui-avatars.com/api/?name='|add:comment.user.username }}"
+                            class="rounded-circle me-3" width="40" height="40" alt="">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-bold mb-0 {% if comment.user.role == 'expert' %}text-success{% endif %}">
+                                    {{ comment.user.username }}
+                                    {% if comment.user.role == 'expert' %}<span
+                                        class="badge bg-light-success text-success fw-bold p-1 rounded-circle ms-1 small">✓</span>{%
+                                    endif %}
+                                </h6>
+                                <small class="text-muted small">{{ comment.created_at|timesince }} ago</small>
+                            </div>
+                            <p class="text-muted small mb-0">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <p class="text-muted small">No comments yet. Be the first to join the conversation!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Add Comment Form -->
+                {% if user.is_authenticated %}
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate-up delay-2">
+                    <div class="card-body p-4 p-md-5">
+                        <h5 class="fw-800 text-success mb-4">Post a Comment</h5>
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <textarea class="form-control mb-4 border-0 bg-light p-4 rounded-4" rows="4"
+                                placeholder="Share your thoughts or professional advice..."></textarea>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow">Submit
+                                    Response</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5 card border-0 shadow-sm rounded-4 bg-light">
+                    <p class="text-muted small mb-3">Login to participate in the discussion.</p>
+                    <a href="{% url 'login' %}"
+                        class="btn btn-outline-success rounded-pill px-4 btn-sm fw-bold mx-auto">Sign In</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Side: Interaction & Related Content -->
+        <div class="col-lg-4 d-none d-lg-block">
+            <div class="sticky-top" style="top: 100px;">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h6 class="fw-800 text-dark mb-4">About the Author</h6>
+                    <div class="text-center mb-4">
+                        <img src="{{ post.user.profile_picture.url|default:'https://ui-avatars.com/api/?name='|add:post.user.username }}"
+                            class="rounded-circle shadow-sm mb-3" width="80" height="80" alt="">
+                        <h6 class="fw-bold mb-1">{{ post.user.username }}</h6>
+                        <p class="text-muted small mb-0">{{ post.user.get_role_display }}</p>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-success rounded-pill btn-sm fw-bold">View Profile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

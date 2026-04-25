@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Post - FosholSheba{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate-up">
+                <div class="bg-success p-5 text-white text-center position-relative">
+                    <h2 class="fw-800 mb-2">New Discussion</h2>
+                    <p class="mb-0 opacity-75">Share your experience or ask the community for help.</p>
+                    <div class="position-absolute end-0 top-0 p-4 opacity-25">
+                        <span class="fs-1">📝</span>
+                    </div>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <!-- Post Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-600 small">Conversation Title</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                placeholder="e.g. My tomato leaves are turning yellow" required>
+                        </div>
+
+                        <!-- Post Category (Static for now) -->
+                        <div class="mb-4">
+                            <label for="category" class="form-label fw-600 small">Select a Topic</label>
+                            <select class="form-control" id="category" name="category">
+                                <option value="general">General Agriculture</option>
+                                <option value="disease">Disease & Pests</option>
+                                <option value="market">Market Trends</option>
+                                <option value="growth">Crop Growth</option>
+                            </select>
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="mb-4">
+                            <label for="content" class="form-label fw-600 small">Post Details</label>
+                            <textarea class="form-control" id="content" name="content" rows="6"
+                                placeholder="Describe what's happening or what you'd like to share..."
+                                required></textarea>
+                        </div>
+
+                        <!-- Optional Image -->
+                        <div class="mb-5">
+                            <label for="image" class="form-label fw-600 small">Add a Photo (Optional)</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        </div>
+
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-end">
+                            <a href="{% url 'forum_list' %}"
+                                class="btn btn-outline-success rounded-pill px-5 fw-bold order-2 order-md-1">Cancel</a>
+                            <button type="submit"
+                                class="btn btn-success rounded-pill px-5 fw-bold shadow order-1 order-md-2">Publish
+                                Post</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

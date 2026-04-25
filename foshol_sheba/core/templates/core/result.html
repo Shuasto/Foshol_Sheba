@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}ডায়াগনস্টিক ফলাফল - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row g-5">
+        <!-- Result Image Card -->
+        <div class="col-lg-5 animate-up">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden h-100">
+                <div class="position-absolute top-0 end-0 p-3 z-index-1">
+                    {% if result.status == 'verified' %}
+                    <span class="badge bg-success px-4 py-2 rounded-pill shadow">AI দ্বারা যাচাইকৃত</span>
+                    {% elif result.status == 'unverified' %}
+                    <span class="badge bg-danger px-4 py-2 rounded-pill shadow">শনাক্ত করা যায়নি</span>
+                    {% else %}
+                    <span class="badge bg-warning text-dark px-4 py-2 rounded-pill shadow">অপেক্ষারত</span>
+                    {% endif %}
+                </div>
+                <img src="{{ result.crop_image.url }}" alt="স্ক্যান ফলাফল" class="w-100 h-100 object-fit-cover"
+                    style="min-height: 400px;">
+                <div class="card-img-overlay d-flex flex-column justify-content-end bg-gradient-dark p-4">
+                    <h5 class="text-white fw-bold mb-1">{{ result.crop.name_bn }}</h5>
+                    <p class="text-white-50 small mb-0">সময়: {{ result.created_at|date:"d M Y, h:i A" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Details -->
+        <div class="col-lg-7 animate-up delay-1">
+            {% if result.status == 'pending' %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 mb-4 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                <div class="spinner-border text-success mb-4" role="status" style="width: 3rem; height: 3rem; border-width: 0.25em;">
+                    <span class="visually-hidden">লোড হচ্ছে...</span>
+                </div>
+                <h3 class="fw-800 text-dark mb-3">AI আপনার ছবি বিশ্লেষণ করছে...</h3>
+                <p class="text-muted mb-4">আমাদের কৃত্রিম বুদ্ধিমত্তা সিস্টেম আপনার ফসলের ক্ষত পরীক্ষা করছে। এতে কয়েক সেকেন্ড সময় লাগতে পারে।</p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-success rounded-pill px-4 fw-bold shadow" onclick="window.location.reload()">
+                        🔄 ফলাফল চেক করুন
+                    </button>
+                    <a href="{% url 'farmers:dashboard' %}" class="btn btn-outline-success rounded-pill px-4 fw-bold">ড্যাশবোর্ডে ফিরে যান</a>
+                </div>
+                <!-- Background decoration -->
+                <span class="position-absolute rotate-12 end-0 top-0 opacity-10" style="font-size: 8rem; line-height: 0;">⏳</span>
+            </div>
+            {% elif result.status == 'unverified' %}
+            <div class="card border-0 shadow-sm rounded-4 p-5 mb-4 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                <span class="mb-3" style="font-size: 4rem;">⚠️</span>
+                <h3 class="fw-800 text-danger mb-3">রোগ শনাক্ত করা যায়নি</h3>
+                <p class="text-muted mb-4 fs-5">{{ result.ai_description|default:"ছবিটি অস্পষ্ট বা কৃষি সম্পর্কিত নয়। অনুগ্রহ করে একটি পরিষ্কার ছবি দিন।" }}</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'farmers:diagnose_crop' %}" class="btn btn-success rounded-pill px-4 fw-bold shadow">
+                        📸 নতুন ছবি দিন
+                    </a>
+                    <a href="{% url 'farmers:dashboard' %}" class="btn btn-outline-success rounded-pill px-4 fw-bold">ড্যাশবোর্ডে ফিরে যান</a>
+                </div>
+                <!-- Background decoration -->
+                <span class="position-absolute rotate-12 end-0 top-0 opacity-10" style="font-size: 8rem; line-height: 0;">❓</span>
+            </div>
+            {% else %}
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <h1 class="fw-800 text-dark mb-0">রোগ নির্ণয়ের ফলাফল</h1>
+                <div class="text-end">
+                    <h3 class="fw-800 text-success mb-0">{{ result.confidence_score|bn_number }}%</h3>
+                    <p class="text-muted small mb-0">নির্ভুলতার হার</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-5 mb-4 bg-light overflow-hidden position-relative">
+                <div class="position-relative z-index-1">
+                    <h4 class="fw-bold text-success mb-3">শনাক্ত করা হয়েছে: {{ result.detected_disease.name_bn }}</h4>
+                    <p class="text-muted mb-0 lead small">{{ result.detected_disease.description_bn|default:"এই রোগের কোনো বিবরণ পাওয়া যায়নি।" }}</p>
+                </div>
+                <!-- Background decoration -->
+                <span class="position-absolute rotate-12 end-0 top-0 opacity-10"
+                    style="font-size: 10rem; line-height: 0;">🔬</span>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Symptoms -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fs-4 me-2">🔍</span>
+                            <h6 class="fw-bold mb-0">লক্ষণসমূহ</h6>
+                        </div>
+                        <p class="text-muted small mb-0">{{ result.detected_disease.symptoms_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+                    </div>
+                </div>
+                <!-- Preventative -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="fs-4 me-2">🛡️</span>
+                            <h6 class="fw-bold mb-0">প্রতিরোধ ব্যবস্থা</h6>
+                        </div>
+                        <p class="text-muted small mb-0">{{ result.detected_disease.preventative_measures_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Treatment Options -->
+            <div class="mb-5">
+                <h5 class="fw-800 text-dark mb-4">প্রস্তাবিত প্রতিকার</h5>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow rounded-4 p-4 border-start border-4 border-success h-100">
+                            <h6 class="fw-bold text-success mb-3">🌿 জৈব প্রতিকার</h6>
+                            <p class="text-muted mb-0 small">{{ result.detected_disease.organic_remedy_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow rounded-4 p-4 border-start border-4 border-warning h-100">
+                            <h6 class="fw-bold text-warning mb-3">🧪 রাসায়নিক চিকিৎসা</h6>
+                            <p class="text-muted mb-0 small">{{ result.detected_disease.chemical_treatment_bn|default:"তথ্য পাওয়া যায়নি।" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Expert Advice Section -->
+            {% if result.expert_advices.exists %}
+            <div class="mb-5">
+                <h5 class="fw-800 text-dark mb-4">বিশেষজ্ঞের মতামত ও পরামর্শ</h5>
+                {% for advice in result.expert_advices.all %}
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-3 border-start border-4 border-info bg-info-subtle bg-opacity-10">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{% if advice.expert.user.profile_picture %}{{ advice.expert.user.profile_picture.url }}{% else %}https://ui-avatars.com/api/?name={{ advice.expert.user.username }}{% endif %}"
+                            class="rounded-circle me-3 border border-2 border-white shadow-sm" width="50" height="50" alt="">
+                        <div>
+                            <h6 class="mb-0 fw-bold text-dark">{{ advice.expert.user.get_full_name|default:advice.expert.user.username }}</h6>
+                            <p class="text-info small mb-0 fw-bold"><i class="bi bi-patch-check-fill me-1"></i> ভেরিফাইড কৃষি বিশেষজ্ঞ</p>
+                        </div>
+                    </div>
+                    <p class="text-dark mb-0" style="font-size: 1.05rem;">{{ advice.advice_bn|linebreaksbr }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-3">
+                <a href="{% url 'farmers:export_diagnosis_pdf' result.pk %}" target="_blank" class="btn btn-success rounded-pill px-5 fw-bold shadow">PDF সেভ করুন</a>
+                {% if existing_post %}
+                    <a href="{% url 'core:forum_detail' existing_post.pk %}" class="btn btn-primary rounded-pill px-5 fw-bold shadow">কমিউনিটি আলোচনা দেখুন</a>
+                {% else %}
+                    <a href="{% url 'core:forum_create' %}?diagnosis_id={{ result.pk }}" class="btn btn-outline-success rounded-pill px-5 fw-bold">কমিউনিটিকে জিজ্ঞাসা করুন</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-dark {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    }
+
+    .rotate-12 {
+        transform: rotate(12deg);
+    }
+
+    .z-index-1 {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+{% endblock %}

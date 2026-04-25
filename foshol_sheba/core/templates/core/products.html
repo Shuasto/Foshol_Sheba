@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Explore Products - FosholSheba{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-8">
+            <h1 class="fw-800 text-success">Fertilizers & Pesticides 📦</h1>
+            <p class="text-muted small">Explore high-quality products for your crop health from our partners.</p>
+        </div>
+        <div class="col-4 text-end">
+            <div class="dropdown">
+                <button class="btn btn-outline-success rounded-pill px-4 fw-bold dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown">
+                    Filter by Category
+                </button>
+                <ul class="dropdown-menu border-0 shadow-lg rounded-4 overflow-hidden">
+                    <li><a class="dropdown-item py-2" href="#">Fertilizers</a></li>
+                    <li><a class="dropdown-item py-2" href="#">Pesticides</a></li>
+                    <li><a class="dropdown-item py-2" href="#">Herbicides</a></li>
+                    <li><a class="dropdown-item py-2" href="#">Fungicides</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Search -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden border-0">
+                <input type="text" class="form-control border-0 py-3 px-4"
+                    placeholder="Search for products, companies, or keywords...">
+                <button class="btn btn-success px-5 fw-bold" type="submit">Find Products</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3 animate-up delay-{{ forloop.counter0 }}">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden transition-up">
+                <div class="position-relative overflow-hidden" style="height: 180px;">
+                    <img src="{{ product.image.url }}" class="w-100 h-100 object-fit-cover" alt="">
+                    <span
+                        class="position-absolute top-0 end-0 m-2 badge bg-success px-2 py-1 rounded-pill small fw-bold">Verified</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-success fw-bold text-uppercase" style="font-size: 0.65rem;">{{
+                            product.category }}</small>
+                        <span class="text-muted fw-800 fs-6">{{ product.price_info|default:'Price Varies' }}</span>
+                    </div>
+                    <h6 class="fw-bold mb-1 text-truncate">{{ product.name }}</h6>
+                    <p class="text-muted mb-3" style="font-size: 0.75rem; line-height: 1.2;">{{ product.company.username
+                        }}</p>
+
+                    <div class="mt-auto">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success btn-sm w-100 rounded-pill fw-bold">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="card border-0 shadow-sm rounded-4 p-5 bg-light">
+                <div class="fs-1 mb-3">🛍️</div>
+                <h5 class="fw-bold text-muted">No products available.</h5>
+                <p class="text-muted small">We're working with partners to bring you the best crop treatments.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

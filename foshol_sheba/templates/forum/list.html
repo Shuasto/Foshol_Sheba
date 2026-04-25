@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}কৃষক ফোরাম - ফসলসেবা{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row mb-5 align-items-center">
+        <div class="col-md-6">
+            {% if is_my_posts %}
+                <h1 class="fw-800 text-success">আমার পোস্টসমূহ 📝</h1>
+                <p class="text-muted">আপনার শেয়ার করা সকল আলোচনা এবং প্রশ্নসমূহ এখানে দেখুন।</p>
+            {% else %}
+                <h1 class="fw-800 text-success">কৃষক ফোরাম 💬</h1>
+                <p class="text-muted">অন্যান্য কৃষকদের সাথে আলোচনা করুন এবং অভিজ্ঞাতা বিনিময় করুন।</p>
+            {% endif %}
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="{% url 'core:forum_create' %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                + নতুন আলোচনা শুরু করুন
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            {% for post in posts %}
+            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden transition-up">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if post.user.profile_picture %}
+                            <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-3" style="width: 45px; height: 45px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                <span class="fs-5">👤</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">{{ post.user.get_full_name|default:post.user.username }}</h6>
+                            <small class="text-muted">{{ post.created_at|date:"d M, Y" }}</small>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'core:forum_detail' post.pk %}" class="text-decoration-none">
+                        <h4 class="fw-bold text-dark mb-3 hover-success">{{ post.title }}</h4>
+                    </a>
+                    
+                    <p class="text-muted mb-4">{{ post.content|truncatechars:200 }}</p>
+
+                    {% if post.image or post.related_diagnosis %}
+                        <div class="rounded-4 overflow-hidden mb-4 bg-light" style="max-height: 350px;">
+                            {% if post.related_diagnosis %}
+                                <img src="{{ post.related_diagnosis.crop_image.url }}" class="w-100" style="object-fit: cover;">
+                            {% elif post.image %}
+                                <img src="{{ post.image.url }}" class="w-100" style="object-fit: cover;">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if post.related_diagnosis %}
+                        <div class="alert alert-success border-0 rounded-4 py-2 mb-4">
+                            <small class="fw-bold"><i class="bi bi-camera me-1"></i> এটি একটি শেয়ার করা রোগ নির্ণয় ফলাফল</small>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex align-items-center border-top pt-3">
+                        <div class="me-4 text-muted small">
+                            <i class="bi bi-chat-left-text me-1"></i> {{ post.comments.count }} টি মন্তব্য
+                        </div>
+                        <a href="{% url 'core:forum_detail' post.pk %}" class="btn btn-link text-success p-0 ms-auto fw-bold text-decoration-none small">
+                            বিস্তারিত দেখুন <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <div class="bg-light rounded-5 p-5">
+                    <span class="display-1 d-block mb-3">📭</span>
+                    <h4 class="fw-bold text-muted">এখনো কোনো আলোচনা নেই।</h4>
+                    <p class="text-muted">প্রথম আলোচনাটি আপনিই শুরু করুন!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-success text-white">
+                <h5 class="fw-bold mb-3">ফোরামের নিয়মাবলী 📜</h5>
+                <ul class="small mb-0 ps-3">
+                    <li class="mb-2">মার্জিত ভাষা ব্যবহার করুন।</li>
+                    <li class="mb-2">একজন অন্যকে সাহায্য করার মানসিকতা রাখুন।</li>
+                    <li class="mb-2">সঠিক এবং নির্ভরযোগ্য তথ্য শেয়ার করুন।</li>
+                </ul>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-3">জনপ্রিয় টপিক 🏷️</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2">ধান চাষ</span>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2">আলুর ব্লাইট</span>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2">জৈব সার</span>
+                    <span class="badge bg-light text-dark rounded-pill px-3 py-2">বাজার দর</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-success:hover {
+        color: #198754 !important;
+    }
+    .transition-up {
+        transition: transform 0.3s ease;
+    }
+    .transition-up:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}

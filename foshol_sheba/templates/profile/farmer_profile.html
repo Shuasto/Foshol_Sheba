@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bn_numbers %}
+
+{% block title %}কৃষক প্রোফাইল - ফসলসেবা{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #2e7d32 0%, #81c784 100%);
+        height: 300px;
+        border-radius: 0 0 40px 40px;
+        position: relative;
+        margin-top: 80px;
+        margin-bottom: 100px;
+    }
+
+    .profile-avatar-wrapper {
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border: 5px solid white;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: #f8fafc;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .info-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        background: white;
+        padding: 30px;
+        height: 100%;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    .crop-badge {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin: 5px;
+    }
+
+    .edit-profile-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 8px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s;
+    }
+
+    .edit-profile-btn:hover {
+        background: white;
+        color: #2e7d32;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <a href="{% url 'farmers:edit_profile' %}" class="edit-profile-btn">
+        <span>✏️ তথ্য পরিবর্তন করুন</span>
+    </a>
+    <div class="profile-avatar-wrapper text-center">
+        {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}" class="profile-avatar">
+        {% else %}
+        <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=81c784&color=fff&size=150" alt="{{ user.first_name }}" class="profile-avatar">
+        {% endif %}
+        <h2 class="fw-800 mt-3">{{ user.first_name }} {{ user.last_name }}</h2>
+        <span class="badge bg-success rounded-pill px-3 py-2">কৃষক</span>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- Personal Information -->
+        <div class="col-lg-6">
+            <div class="info-card">
+                <h4 class="fw-800 text-success mb-4 border-bottom pb-2">ব্যক্তিগত তথ্য</h4>
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <span class="info-label">পুরো নাম</span>
+                        <span class="info-value">{{ user.first_name }} {{ user.last_name }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="info-label">ইউজারনেম</span>
+                        <span class="info-value text-muted">@{{ user.username }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="info-label">ইমেইল ঠিকানা</span>
+                        <span class="info-value">{{ user.email }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="info-label">মোবাইল নম্বর</span>
+                        <span class="info-value">{{ user.phone_no }}</span>
+                    </div>
+                    <div class="col-12">
+                        <span class="info-label">বর্তমান ঠিকানা</span>
+                        <span class="info-value">{{ user.address }}{% if user.upazila %}, {{ user.upazila }}{% endif %}{% if user.district %}, {{ user.district }}{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Farming Information -->
+        <div class="col-lg-6">
+            <div class="info-card">
+                <h4 class="fw-800 text-success mb-4 border-bottom pb-2">কৃষি সংক্রান্ত তথ্য</h4>
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <span class="info-label">খামারের আকার</span>
+                        <span class="info-value">
+                            {% if profile.farm_size_in_decimals %}
+                                {{ profile.farm_size_in_decimals | bn_numbers }} শতাংশ
+                            {% else %}
+                                <span class="text-muted italic">তথ্য নেই</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="info-label">সদস্য হয়েছেন</span>
+                        <span class="info-value">{{ user.date_joined|date:"d F, Y" }}</span>
+                    </div>
+                    <div class="col-12">
+                        <span class="info-label">প্রধান ফসলসমূহ</span>
+                        <div class="mt-2">
+                            {% for crop in profile.primary_crops.all %}
+                                <span class="crop-badge">{{ crop.name_bn }}</span>
+                            {% empty %}
+                                <span class="text-muted italic">এখনো কোনো ফসল যুক্ত করা হয়নি</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="row g-4 mt-2">
+        <!-- Badges & Achievements -->
+        <div class="col-12">
+            <div class="info-card">
+                <h4 class="fw-800 text-success mb-4 border-bottom pb-2">অর্জন ও ব্যাজ 🏅</h4>
+                <div class="d-flex flex-wrap gap-3">
+                    {% for badge in badges %}
+                    <div class="card border-0 bg-light-success-badge rounded-4 p-3 d-flex flex-row align-items-center" style="min-width: 250px; flex: 1;">
+                        <span class="fs-1 me-3">{{ badge.icon }}</span>
+                        <div>
+                            <h6 class="fw-bold text-success mb-1">{{ badge.title }}</h6>
+                            <p class="text-muted small mb-0">{{ badge.description }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center w-100 py-4">
+                        <p class="text-muted italic mb-0">এখনো কোনো ব্যাজ অর্জন করা হয়নি। ফোরামে অংশ নিন বা ফসল স্ক্যান করুন!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light-success-badge { background-color: #f1f8f1; }
+</style>
+
+{% endblock %}

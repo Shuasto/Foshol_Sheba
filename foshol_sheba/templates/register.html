@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}নিবন্ধন করুন - ফসলসেবা{% endblock %}
+
+{% block content %}
+<section class="auth-container mt-5 py-5">
+    <div class="auth-card glass mt-4">
+        <div class="text-center mb-4">
+            <h2 class="mb-2">শুরু করুন</h2>
+            <p class="text-muted small">আমাদের কৃষি সমৃদ্ধি কমিউনিটিতে যোগ দিন</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="email" class="form-label fw-600 small">ইমেইল ঠিকানা (ঐচ্ছিক)</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="ইমেইল দিন">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label fw-600 small">আপনি কে?</label>
+                <select class="form-control" id="role" name="role" required onchange="toggleNameFields(this.value)">
+                    <option value="" disabled selected>আপনার ভূমিকা নির্বাচন করুন</option>
+                    <option value="farmer">কৃষক</option>
+                    <option value="expert">কৃষি বিশেষজ্ঞ</option>
+                    <option value="company">কীটনাশক/সার কোম্পানি</option>
+                </select>
+            </div>
+
+            <!-- Conditional Name Fields -->
+            <div id="individualNameFields" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name" class="form-label fw-600 small">প্রথম নাম</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="যেমন: রহিম">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name" class="form-label fw-600 small">শেষ নাম</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="যেমন: আহমেদ">
+                    </div>
+                </div>
+            </div>
+
+            <div id="companyNameFields" style="display: none;">
+                <div class="mb-3">
+                    <label for="full_name" class="form-label fw-600 small">কোম্পানির পূর্ণ নাম</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="যেমন: গ্রীন এগ্রিকালচার লি.">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="phone_no" class="form-label fw-600 small">মোবাইল নম্বর</label>
+                    <input type="text" class="form-control" id="phone_no" name="phone_no" placeholder="+৮৮০১৭XXXXXXXX">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="district" class="form-label fw-600 small">জেলা</label>
+                    <input type="text" class="form-control" id="district" name="district" placeholder="আপনার জেলা">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="upazila" class="form-label fw-600 small">উপজেলা</label>
+                    <input type="text" class="form-control" id="upazila" name="upazila" placeholder="আপনার উপজেলা">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label fw-600 small">সম্পূর্ণ ঠিকানা</label>
+                <textarea class="form-control" id="address" name="address" rows="2" placeholder="আপনার সম্পূর্ণ ঠিকানা দিন"></textarea>
+            </div>
+
+            <div class="mb-4 text-center">
+                <label class="form-label fw-600 small d-block mb-3">প্রোফাইল ছবি</label>
+                <div class="profile-preview-container mb-3">
+                    <img id="imagePreview" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png" alt="Profile Preview" class="rounded-circle shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
+                </div>
+                <div class="custom-file-upload">
+                    <input type="file" class="form-control d-none" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewImage(this)">
+                    <button type="button" class="btn btn-outline-success btn-sm rounded-pill px-4" onclick="document.getElementById('profile_picture').click()">
+                        ছবি নির্বাচন করুন
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="password" class="form-label fw-600 small">পাসওয়ার্ড</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="••••••••"
+                        required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="confirm_password" class="form-label fw-600 small">পাসওয়ার্ড নিশ্চিত করুন</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                        placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div class="form-check mb-4">
+                <input type="checkbox" class="form-check-input" id="terms" required>
+                <label class="form-check-label small" for="terms">আমি <a href="#"
+                        class="text-success text-decoration-none fw-600">শর্তাবলী</a> মেনে নিচ্ছি</label>
+            </div>
+
+            <button type="submit" class="btn auth-btn shadow-sm">অ্যাকাউন্ট তৈরি করুন</button>
+
+            <div class="text-center mt-4">
+                <p class="small text-muted">ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="{% url 'core:login' %}"
+                        class="text-success fw-600 text-decoration-none">লগ ইন করুন</a></p>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png";
+        }
+    }
+
+    function toggleNameFields(role) {
+        const individual = document.getElementById('individualNameFields');
+        const company = document.getElementById('companyNameFields');
+        const firstName = document.getElementById('first_name');
+        const lastName = document.getElementById('last_name');
+        const fullName = document.getElementById('full_name');
+
+        if (role === 'company') {
+            individual.style.display = 'none';
+            company.style.display = 'block';
+            firstName.required = false;
+            lastName.required = false;
+            fullName.required = true;
+        } else if (role === 'farmer' || role === 'expert') {
+            individual.style.display = 'block';
+            company.style.display = 'none';
+            firstName.required = true;
+            lastName.required = true;
+            fullName.required = false;
+        } else {
+            individual.style.display = 'none';
+            company.style.display = 'none';
+            firstName.required = false;
+            lastName.required = false;
+            fullName.required = false;
+        }
+    }
+</script>
+{% endblock %}
