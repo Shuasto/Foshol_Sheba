@@ -26,3 +26,43 @@
 [2026-04-26 00:30:30] Diagnosis ID 4: Successfully updated and saved diagnosis history
 [2026-04-26 00:30:30] Diagnosis ID 4: Database connection closed. Process finished.
 
+[2026-04-26 22:05:48] Diagnosis ID 5: Starting AI check process
+[2026-04-26 22:05:48] Diagnosis ID 5: Fetched DiagnosisHistory. Image path: F:\Shuasto Webapp\foshol_sheba\media\diagnostic_images\crop_diagnosis_AEPHZiG.png
+[2026-04-26 22:05:53] Diagnosis ID 5: AI Service Result: {'status': 'success', 'data': {'disease': 'Unknown', 'confidence_score': 0.0, 'description': 'ছবিটি অস্পষ্ট বা অন্ধকার। অনুগ্রহ করে একটি পরিষ্কার ছবি দিন।'}}
+[2026-04-26 22:05:53] Diagnosis ID 5: Success. Parsed data - Disease: Unknown, Confidence: 0.0
+[2026-04-26 22:05:53] Diagnosis ID 5: Disease not found in DB
+[2026-04-26 22:05:53] Diagnosis ID 5: Successfully updated and saved diagnosis history
+[2026-04-26 22:05:53] Diagnosis ID 5: Database connection closed. Process finished.
+
+[2026-04-26 22:16:57] Diagnosis ID 6: Starting AI check process
+[2026-04-26 22:16:57] Diagnosis ID 6: Fetched DiagnosisHistory. Image path: F:\Shuasto Webapp\foshol_sheba\media\diagnostic_images\crop_diagnosis_H0gaoDz.png
+[2026-04-26 22:17:05] Diagnosis ID 6: AI Service Result: {'status': 'success', 'data': {'disease': 'Unknown', 'confidence_score': 0.0, 'description': 'ছবিটিতে কোনো ফসলের পাতা দেখা যাচ্ছে না। অনুগ্রহ করে একটি পরিষ্কার ছবি দিন।'}}
+[2026-04-26 22:17:05] Diagnosis ID 6: Success. Parsed data - Disease: Unknown, Confidence: 0.0
+[2026-04-26 22:17:05] Diagnosis ID 6: Disease not found in DB
+[2026-04-26 22:17:05] Diagnosis ID 6: Successfully updated and saved diagnosis history
+[2026-04-26 22:17:05] Diagnosis ID 6: Database connection closed. Process finished.
+
+[2026-04-28 19:13:25] Diagnosis ID 7: Starting AI check process
+[2026-04-28 19:13:25] Diagnosis ID 7: Fetched DiagnosisHistory. Image path: F:\Shuasto Webapp\foshol_sheba\media\diagnostic_images\crop_diagnosis_iEDxsYn.png
+[2026-04-28 19:13:35] Diagnosis ID 7: AI Service Result: {'status': 'success', 'data': {'disease': 'Unknown', 'confidence_score': 0.0, 'description': 'ছবিতে কোনো ফসলের পাতা দেখা যাচ্ছে না। অনুগ্রহ করে একটি পরিষ্কার পাতার ছবি দিন।'}}
+[2026-04-28 19:13:35] Diagnosis ID 7: Success. Parsed data - Disease: Unknown, Confidence: 0.0
+[2026-04-28 19:13:35] Diagnosis ID 7: Disease not found in DB
+[2026-04-28 19:13:35] Diagnosis ID 7: Successfully updated and saved diagnosis history
+[2026-04-28 19:13:35] Diagnosis ID 7: Database connection closed. Process finished.
+
+[2026-04-28 19:14:49] Diagnosis ID 8: Starting AI check process
+[2026-04-28 19:14:49] Diagnosis ID 8: Fetched DiagnosisHistory. Image path: F:\Shuasto Webapp\foshol_sheba\media\diagnostic_images\crop_diagnosis_ZxhJvMu.png
+[2026-04-28 19:15:03] Diagnosis ID 8: AI Service Result: {'status': 'success', 'data': {'disease': 'Unknown', 'confidence_score': 0.0, 'description': 'এই ছবিতে কোনো ফসলের পাতা দেখা যাচ্ছে না, বরং আলুর কন্দ সদৃশ কিছু বস্তু দেখা যাচ্ছে।'}}
+[2026-04-28 19:15:03] Diagnosis ID 8: Success. Parsed data - Disease: Unknown, Confidence: 0.0
+[2026-04-28 19:15:03] Diagnosis ID 8: Disease not found in DB
+[2026-04-28 19:15:03] Diagnosis ID 8: Successfully updated and saved diagnosis history
+[2026-04-28 19:15:03] Diagnosis ID 8: Database connection closed. Process finished.
+
+[2026-04-28 20:28:26] Diagnosis ID 9: Starting AI check process
+[2026-04-28 20:28:26] Diagnosis ID 9: Fetched DiagnosisHistory. Image path: F:\Shuasto Webapp\foshol_sheba\media\diagnostic_images\crop_diagnosis_aU9y0cp.png
+[2026-04-28 20:28:37] Diagnosis ID 9: AI Service Result: {'status': 'success', 'data': {'disease': 'Unknown', 'confidence_score': 0.0, 'description': 'ছবিতে কোনো ফসলের পাতা বা রোগের লক্ষণ দেখা যাচ্ছে না। এটি একটি মানুষের ছবি।'}}
+[2026-04-28 20:28:37] Diagnosis ID 9: Success. Parsed data - Disease: Unknown, Confidence: 0.0
+[2026-04-28 20:28:37] Diagnosis ID 9: Disease not found in DB
+[2026-04-28 20:28:37] Diagnosis ID 9: Successfully updated and saved diagnosis history
+[2026-04-28 20:28:37] Diagnosis ID 9: Database connection closed. Process finished.
+
