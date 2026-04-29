@@ -26,7 +26,7 @@ DEBUG = False
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Add your domain names or IP addresses here for production
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = ["*"]
 
 
 # --- APPLICATION DEFINITION ---
